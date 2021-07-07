@@ -40,31 +40,15 @@ contract TokenFarm {
         hasStaked[msg.sender] = true;
     }
 
-    // 2. Issuing Tokens
-    function issueTokens() public {
-        // Only owner can call this function
-        require(msg.sender == owner, "caller must be the owner");
-
-        // Issue tokens to all stakers
-        for (uint i = 0; i < stakers.length; i++) {
-            address recipient = stakers[i];
-            uint balance = stakingBalance[recipient];
-
-            if (balance > 0) {
-                dappToken.transfer(recipient, balance);
-            }
-        }
-    }
-
-    // 3. Unstaking Tokens (Withdraw)
+    // Unstaking Tokens (Withdraw)
     function unstakeTokens() public {
         // Fetch staking balance
         uint balance = stakingBalance[msg.sender];
 
-        // Require amount to be greater than 0
+        // Require amount greater than 0
         require(balance > 0, "staking balance cannot be 0");
 
-        // Transfer Mock DAI tokens to sender for unstaking
+        // Transfer Mock Dai tokens to this contract for staking
         daiToken.transfer(msg.sender, balance);
 
         // Reset staking balance
@@ -72,5 +56,20 @@ contract TokenFarm {
 
         // Update staking status
         isStaking[msg.sender] = false;
+    }
+
+    // Issuing Tokens
+    function issueTokens() public {
+        // Only owner can call this function
+        require(msg.sender == owner, "caller must be the owner");
+
+        // Issue tokens to all stakers
+        for (uint i=0; i<stakers.length; i++) {
+            address recipient = stakers[i];
+            uint balance = stakingBalance[recipient];
+            if(balance > 0) {
+                dappToken.transfer(recipient, balance);
+            }
+        }
     }
 }
